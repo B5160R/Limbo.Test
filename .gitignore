@@ -1,0 +1,36 @@
+# Build results
+bin/
+obj/
+*.exe
+*.dll
+*.pdb
+
+# User-specific files
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# Logs
+*.log
+
+# NuGet
+*.nupkg
+packages/
+project.lock.json
+project.fragment.lock.json
+
+# Temporary files
+*.tmp
+*.temp
+*.cache
+*.ide
+
+# OS-specific files
+.DS_Store
+Thumbs.db
