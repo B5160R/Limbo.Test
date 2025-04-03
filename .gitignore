@@ -34,3 +34,7 @@ project.fragment.lock.json
 # OS-specific files
 .DS_Store
 Thumbs.db
+
+# JSON schema files for appsettings.json
+appsettings-schema.json
+appsettings-schema.*.json
