@@ -1,15 +1,12 @@
-internal sealed class UsesPropertyEditor : IContentRequirementBase<PropertyDetails> {
-    private readonly string _propertyEditorAlias;
-    private readonly bool _invert;
+// Requirement to check if a property uses a specific property editor
+internal sealed class UsesPropertyEditor(string _propertyEditorAlias, bool _invert = false)
+    : IContentRequirementBase<PropertyDetails> {
 
-    public UsesPropertyEditor(string propertyEditorAlias, bool invert = false) {
-        _propertyEditorAlias = propertyEditorAlias;
-        _invert = invert;
-    }
-
+    // Checks if the property editor alias matches the expected value
     public bool IsRequirementMet(PropertyDetails content) {
-        // 'invert' may turn the requirement from 'should be' to 'should not be'.
         bool shouldBe = !_invert;
-        return content.Property.PropertyEditorAlias.Equals(_propertyEditorAlias, StringComparison.OrdinalIgnoreCase) == shouldBe;
+
+        return content.Property.PropertyEditorAlias
+            .Equals(_propertyEditorAlias, StringComparison.OrdinalIgnoreCase) == shouldBe;
     }
 }

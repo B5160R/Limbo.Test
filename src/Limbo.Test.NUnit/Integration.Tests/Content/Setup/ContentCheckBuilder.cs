@@ -1,51 +1,50 @@
 using Microsoft.Extensions.DependencyInjection;
 
+// Static factory for creating content check builders
 internal static class ContentCheckBuilder {
-    // 👇 A static method provides a convenient starting point for building content checks.
-    // We simply instantiate a new builder and return it by its interface, so we can build against the interface.
+    // Creates a new content check builder for the specified check and content types
     public static IContentCheckBuilder<TCheck, TContent> Create<TCheck, TContent>(IServiceProvider serviceProvider)
         where TCheck : ContentCheckBase<TContent>
         => new ContentCheckBuilder<TCheck, TContent>(serviceProvider);
 }
 
-// 👇 The interface defines how we build our content check
+// Interface defining a builder for content checks
 internal interface IContentCheckBuilder<TCheck, TContent>
     where TCheck : ContentCheckBase<TContent> {
-    // 👇 Option 1: automatically instantiate a check with the given parameters
+
+    // Adds a requirement to the builder by creating an instance of the requirement type
     IContentCheckBuilder<TCheck, TContent> WithRequirement<TRequirement>(params object[] parameters)
         where TRequirement : IContentRequirementBase<TContent>;
 
-    // 👇 Option 2: create the requirement manually and pass it by hand
+    // Adds an existing requirement instance to the builder
     IContentCheckBuilder<TCheck, TContent> WithRequirement(IContentRequirementBase<TContent> requirement);
 
-    ContentCheckBase<TContent> Go();
+    // Builds the content check with the specified requirements
+    ContentCheckBase<TContent> Build();
 }
 
-internal sealed class ContentCheckBuilder<TCheck, TContent> : IContentCheckBuilder<TCheck, TContent>
+// Implementation of the content check builder
+internal sealed class ContentCheckBuilder<TCheck, TContent>(IServiceProvider _serviceProvider)
+    : IContentCheckBuilder<TCheck, TContent>
     where TCheck : ContentCheckBase<TContent> {
-    private readonly List<IContentRequirementBase<TContent>> _requirements;
-    private readonly IServiceProvider _serviceProvider;
 
-    public ContentCheckBuilder(IServiceProvider serviceProvider) {
-        _requirements = new List<IContentRequirementBase<TContent>>();
-        _serviceProvider = serviceProvider;
-    }
+    // List of requirements to be applied to the content check
+    private readonly List<IContentRequirementBase<TContent>> _requirements = new();
 
+    // Adds a requirement by creating an instance using the service provider
     public IContentCheckBuilder<TCheck, TContent> WithRequirement<TRequirement>(params object[] parameters)
         where TRequirement : IContentRequirementBase<TContent> {
-        // 👇 'ActivatorUtilities' is a utility from microsoft that makes it easier to instantiate objects of a given type, using a service provider to provide constructor parameters.
-        // This is the part that allows us to use dependency injection inside a requirement
         return WithRequirement(ActivatorUtilities.CreateInstance<TRequirement>(_serviceProvider, parameters));
     }
 
+    // Adds an existing requirement instance to the list
     public IContentCheckBuilder<TCheck, TContent> WithRequirement(IContentRequirementBase<TContent> requirement) {
         _requirements.Add(requirement);
         return this;
     }
 
-    public ContentCheckBase<TContent> Go() {
-        // 👇 Once again, use the activator utilities to create an instance of the check.
-        // This allows us to use dependency injection inside a rule
+    // Builds the content check instance with the specified requirements
+    public ContentCheckBase<TContent> Build() {
         return ActivatorUtilities.CreateInstance<TCheck>(_serviceProvider, _requirements);
     }
 }

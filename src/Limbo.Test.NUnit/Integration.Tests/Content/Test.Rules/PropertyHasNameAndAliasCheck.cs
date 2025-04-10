@@ -1,12 +1,12 @@
 using NUnit.Framework;
 
+// Content check to ensure properties have valid names and aliases
 internal sealed class PropertyHasNameAndAliasCheck : ContentCheckBase<PropertyDetails> {
     public PropertyHasNameAndAliasCheck(IReadOnlyCollection<IContentRequirementBase<PropertyDetails>> requirements) : base(requirements) { }
 
     protected override ValueTask DoValidateContentAsync(PropertyDetails content) {
-
         Assert.That(content, Is.Not.Null, "Content is null");
-        
+
         Assert.That(content.Property.Name, Is.Not.Null.Or.Empty,
             string.Format("Property name is null or empty for property with ID {0}", content.Property.Id));
 

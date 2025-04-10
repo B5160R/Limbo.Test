@@ -1,29 +1,32 @@
 using Umbraco.Cms.Core.PropertyEditors;
 using Umbraco.Cms.Core.Services;
 
+// Requirement to check if the "Hide Label" setting is correctly configured for TinyMCE properties
 internal sealed class RteHidesLabel : IContentRequirementBase<PropertyDetails> {
     private readonly IDataTypeService _dataTypeService;
     private readonly bool _invert;
 
+    // Constructor to initialize the data type service and invert flag
     public RteHidesLabel(IDataTypeService dataTypeService, bool invert = false) {
         _dataTypeService = dataTypeService;
         _invert = invert;
     }
 
+    // Checks if the "Hide Label" setting matches the expected value
     public bool IsRequirementMet(PropertyDetails content) {
-        // This requirement only applies to rich text editor properties, so we need to make sure that the data type is a rich text editor
+        // Skip validation if the property is not TinyMCE
         if (content.Property.PropertyEditorAlias is not "Umbraco.TinyMCE") return true;
 
-        // Use the datatype service to find the rich text editor settings
+        // Get the data type configuration
         var dataType = _dataTypeService.GetDataType(content.Property.DataTypeId);
         if (dataType is null) return true;
 
-        // Finally read the config from the rich text editor to find out whether or not the label has been hidden
+        // Get the TinyMCE configuration
         var rteConfig = dataType.ConfigurationAs<RichTextConfiguration>();
         if (rteConfig is null) return true;
 
+        // Check if the "Hide Label" setting matches the expected value
         bool shouldBeHidden = !_invert;
-
         return rteConfig.HideLabel == shouldBeHidden;
     }
 }
