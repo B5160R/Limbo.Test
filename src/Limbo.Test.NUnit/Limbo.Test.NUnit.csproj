@@ -22,10 +22,10 @@
     <PackageReference Include="NUnit" Version="3.14.0" />
     <PackageReference Include="NUnit.Analyzers" Version="3.14.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.14.0" />
-    <PackageReference Include="Umbraco.Cms.Core" Version="13.7.1" />
-    <PackageReference Include="Umbraco.Cms.Tests.Integration" Version="15.3.0" />
-    <PackageReference Include="Umbraco.Cms.Web.Common" Version="13.7.1" />
-    <PackageReference Include="Umbraco.Cms.Web.Website" Version="13.7.1" />
+    <PackageReference Include="Umbraco.Cms.Core" Version="13.7.2" />
+    <!-- <PackageReference Include="Umbraco.Cms.Tests.Integration" Version="15.3.0" /> -->
+    <PackageReference Include="Umbraco.Cms.Web.Common" Version="13.7.2" />
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="13.7.2" />
   </ItemGroup>
 
   <ItemGroup>

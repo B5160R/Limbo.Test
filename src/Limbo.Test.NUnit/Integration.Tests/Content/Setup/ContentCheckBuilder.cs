@@ -21,8 +21,7 @@ internal interface IContentCheckBuilder<TCheck, TContent>
     ContentCheckBase<TContent> Go();
 }
 
-internal sealed class ContentCheckBuilder<TCheck, TContent>
-    : IContentCheckBuilder<TCheck, TContent>
+internal sealed class ContentCheckBuilder<TCheck, TContent> : IContentCheckBuilder<TCheck, TContent>
     where TCheck : ContentCheckBase<TContent> {
     private readonly List<IContentRequirementBase<TContent>> _requirements;
     private readonly IServiceProvider _serviceProvider;

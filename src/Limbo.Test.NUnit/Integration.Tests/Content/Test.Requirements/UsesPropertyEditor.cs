@@ -8,7 +8,7 @@ internal sealed class UsesPropertyEditor : IContentRequirementBase<PropertyDetai
     }
 
     public bool IsRequirementMet(PropertyDetails content) {
-        // 👇 'invert' may turn the requirement from 'should be' to 'should not be'.
+        // 'invert' may turn the requirement from 'should be' to 'should not be'.
         bool shouldBe = !_invert;
         return content.Property.PropertyEditorAlias.Equals(_propertyEditorAlias, StringComparison.OrdinalIgnoreCase) == shouldBe;
     }

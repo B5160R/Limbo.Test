@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Limbo.Test.Project.Integrat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Limbo.Test.NUnit", "Limbo.Test.NUnit\Limbo.Test.NUnit.csproj", "{D7F65203-E83B-4557-9773-B239DA546CAB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Limbo.Test.Umbraco", "Limbo.Test.Umbraco\Limbo.Test.Umbraco.csproj", "{7F98BC7B-0B12-4360-BF94-5F3D8F0344E5}"
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,5 +62,17 @@ Global
 		{D7F65203-E83B-4557-9773-B239DA546CAB}.Release|x64.Build.0 = Release|Any CPU
 		{D7F65203-E83B-4557-9773-B239DA546CAB}.Release|x86.ActiveCfg = Release|Any CPU
 		{D7F65203-E83B-4557-9773-B239DA546CAB}.Release|x86.Build.0 = Release|Any CPU
+		{7F98BC7B-0B12-4360-BF94-5F3D8F0344E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F98BC7B-0B12-4360-BF94-5F3D8F0344E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F98BC7B-0B12-4360-BF94-5F3D8F0344E5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7F98BC7B-0B12-4360-BF94-5F3D8F0344E5}.Debug|x64.Build.0 = Debug|Any CPU
+		{7F98BC7B-0B12-4360-BF94-5F3D8F0344E5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7F98BC7B-0B12-4360-BF94-5F3D8F0344E5}.Debug|x86.Build.0 = Debug|Any CPU
+		{7F98BC7B-0B12-4360-BF94-5F3D8F0344E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F98BC7B-0B12-4360-BF94-5F3D8F0344E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F98BC7B-0B12-4360-BF94-5F3D8F0344E5}.Release|x64.ActiveCfg = Release|Any CPU
+		{7F98BC7B-0B12-4360-BF94-5F3D8F0344E5}.Release|x64.Build.0 = Release|Any CPU
+		{7F98BC7B-0B12-4360-BF94-5F3D8F0344E5}.Release|x86.ActiveCfg = Release|Any CPU
+		{7F98BC7B-0B12-4360-BF94-5F3D8F0344E5}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
