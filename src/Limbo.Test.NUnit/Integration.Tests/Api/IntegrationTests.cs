@@ -1,8 +1,9 @@
 using System.Net;
 using Herningsholm.Features.Employees.Repository;
+using Herningsholm.Web;
 using NUnit.Framework;
 
-public class IntegrationTests : IntegrationTestBase {
+public class IntegrationTests : IntegrationTestBase<Program> {
 
     [TestCase(TestName = "Root page returns 200 OK")]
     public async Task GetRootPage_ReturnsOK() {

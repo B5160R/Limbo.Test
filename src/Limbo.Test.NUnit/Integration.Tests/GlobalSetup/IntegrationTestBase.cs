@@ -4,23 +4,23 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using Umbraco.Cms.Core.Configuration.Models;
 
-public abstract class IntegrationTestBase {
+public abstract class IntegrationTestBase<TProgram> where TProgram : class {
 
-    protected CustomWebApplicationFactory WebsiteFactory { get; private set; } = new();
+    protected CustomWebApplicationFactory<TProgram> WebsiteFactory;
     protected AsyncServiceScope Scope { get; private set; }
     protected IServiceProvider ServiceProvider => Scope.ServiceProvider;
 
-    protected virtual CustomWebApplicationFactory CreateApplicationFactory() {
-        return new CustomWebApplicationFactory();
+    protected virtual CustomWebApplicationFactory<TProgram> CreateApplicationFactory() {
+        return new CustomWebApplicationFactory<TProgram>();
     }
 
-    [SetUp]
+    [OneTimeSetUp]
     public virtual void Setup() {
         WebsiteFactory = CreateApplicationFactory();
         Scope = WebsiteFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateAsyncScope();
     }
 
-    [TearDown]
+    [OneTimeTearDown]
     public virtual void TearDown() {
         Scope.Dispose();
         WebsiteFactory.Dispose();
@@ -33,6 +33,12 @@ public abstract class IntegrationTestBase {
         var response = await Client.GetAsync(url);
         return JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync()
             ?? throw new InvalidOperationException("Response content is null"))!;
+    }
+
+    protected virtual async Task<string> GetContentAsStringAsync(string url) {
+        var response = await Client.GetAsync(url);
+        return await response.Content.ReadAsStringAsync()
+            ?? throw new InvalidOperationException("Response content is null");
     }
 
     protected virtual TType GetService<TType>() where TType : notnull

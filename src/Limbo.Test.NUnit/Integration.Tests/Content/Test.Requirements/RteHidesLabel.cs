@@ -2,7 +2,7 @@ using Umbraco.Cms.Core.PropertyEditors;
 using Umbraco.Cms.Core.Services;
 
 // Requirement to check if the "Hide Label" setting is correctly configured for TinyMCE properties
-internal sealed class RteHidesLabel : IContentRequirementBase<PropertyDetails> {
+internal sealed class RteHidesLabel : IContentRequirementBase<DocumentTypeDetails> {
     private readonly IDataTypeService _dataTypeService;
     private readonly bool _invert;
 
@@ -13,7 +13,7 @@ internal sealed class RteHidesLabel : IContentRequirementBase<PropertyDetails> {
     }
 
     // Checks if the "Hide Label" setting matches the expected value
-    public bool IsRequirementMet(PropertyDetails content) {
+    public bool IsRequirementMet(DocumentTypeDetails content) {
         // Skip validation if the property is not TinyMCE
         if (content.Property.PropertyEditorAlias is not "Umbraco.TinyMCE") return true;
 

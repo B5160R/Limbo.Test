@@ -19,6 +19,8 @@ internal interface IContentCheckBuilder<TCheck, TContent>
     // Adds an existing requirement instance to the builder
     IContentCheckBuilder<TCheck, TContent> WithRequirement(IContentRequirementBase<TContent> requirement);
 
+    IContentCheckBuilder<TCheck, TContent> WithProjectInitials(string projectInitials);
+
     // Builds the content check with the specified requirements
     ContentCheckBase<TContent> Build();
 }
@@ -30,6 +32,7 @@ internal sealed class ContentCheckBuilder<TCheck, TContent>(IServiceProvider _se
 
     // List of requirements to be applied to the content check
     private readonly List<IContentRequirementBase<TContent>> _requirements = new();
+    private string _projectInitials = "";
 
     // Adds a requirement by creating an instance using the service provider
     public IContentCheckBuilder<TCheck, TContent> WithRequirement<TRequirement>(params object[] parameters)
@@ -43,8 +46,13 @@ internal sealed class ContentCheckBuilder<TCheck, TContent>(IServiceProvider _se
         return this;
     }
 
+    public IContentCheckBuilder<TCheck, TContent> WithProjectInitials(string projectInitials) {
+        _projectInitials = projectInitials;
+        return this;
+    }
+
     // Builds the content check instance with the specified requirements
     public ContentCheckBase<TContent> Build() {
-        return ActivatorUtilities.CreateInstance<TCheck>(_serviceProvider, _requirements);
+        return ActivatorUtilities.CreateInstance<TCheck>(_serviceProvider, _requirements, _projectInitials);
     }
 }

@@ -1,13 +1,10 @@
-using Herningsholm.Web;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
-
-// TODO: Find a way to set Program reference dynamically (not like now by using...)
-public class CustomWebApplicationFactory : WebApplicationFactory<Program> {
+public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProgram> where TProgram : class {
 
     public HttpClient CreateCustomClient() {
         HttpClient client = CreateClient();
@@ -16,24 +13,20 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program> {
         return client;
     }
 
-    protected override void ConfigureWebHost(IWebHostBuilder builder)
-    {
+    protected override void ConfigureWebHost(IWebHostBuilder builder) {
         var projectDir = Directory.GetCurrentDirectory();
         var configPath = Path.Combine(projectDir, "appsettings.Tests.json");
 
-        builder.ConfigureAppConfiguration(conf =>
-        {
+        builder.ConfigureAppConfiguration(conf => {
             conf.AddJsonFile(configPath);
         });
 
-        builder.ConfigureServices(services =>
-        {
+        builder.ConfigureServices(services => {
             // Remove all hosted services to prevent background jobs from starting
             var hostedServices = services.Where(descriptor =>
                 descriptor.ServiceType == typeof(IHostedService)).ToList();
 
-            foreach (var hostedService in hostedServices)
-            {
+            foreach (var hostedService in hostedServices) {
                 services.Remove(hostedService);
             }
 
@@ -41,38 +34,4 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program> {
             // services.AddSingleton<IHostedService, MockHostedService>();
         });
     }
-
-    // private const string _inMemoryConnectionString = "Data Source=IntegrationTests;Mode=Memory;Cache=Shared";
-    // private readonly SqliteConnection _imConnection;
-    //
-    // public CustomWebApplicationFactory() {
-    //     _imConnection = new SqliteConnection(_inMemoryConnectionString);
-    //     _imConnection.Open();
-    // }
-    //
-    // protected override void ConfigureWebHost(IWebHostBuilder builder) {
-    //     // TODO: Find out if env should be something else...
-    //     // Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
-    //
-    //     var projectDir = Directory.GetCurrentDirectory();
-    //     var configPath = Path.Combine(projectDir, "appsettings.Tests.json");
-    //
-    //     builder.ConfigureAppConfiguration(conf => {
-    //         conf.AddJsonFile(configPath);
-    //         conf.AddInMemoryCollection(new KeyValuePair<string, string?>[]
-    //         {
-    //             new("ConnectionStrings:umbracoDbDSN", _inMemoryConnectionString),
-    //             new("ConnectionStrings:umbracoDbDSN_ProviderName", "Microsoft.Data.Sqlite")
-    //         });
-    //     });
-    // }
-    //
-    // protected override void Dispose(bool disposing) {
-    //     base.Dispose(disposing);
-    //
-    //     // When this application factory is disposed, close the connection to the in-memory database
-    //     _imConnection.Close();
-    //     _imConnection.Dispose();
-    // }
-
 }
