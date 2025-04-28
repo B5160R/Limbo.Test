@@ -75,6 +75,7 @@ public class SpaApiControllerTests : IntegrationTestBase<Program> {
         Assert.That(backofficeContentElementsParsedJson, Is.Not.Null, "Backoffice content is null.");
         Assert.That(backofficeContentElementsParsedJson, Is.Not.Empty, "Backoffice content is empty.");
 
+        // This focuses on the elements on the document (page) only (ie. 'contentData' and 'contentElements')
         var backofficeTokens = backofficeContentElementsParsedJson.SelectTokens("$..contentData[?(@.udi)]");
         var spaResponseTokens = spaResponseParsedJson.SelectTokens("$..contentElements[?(@.key)]");
 
@@ -105,8 +106,10 @@ public class SpaApiControllerTests : IntegrationTestBase<Program> {
 
                         if (subLevelUdiKey == subLevelSpaKey) {
                             Assert.That(subLevelSpaKey, Is.EquivalentTo(subLevelUdiKey), $"Sub-level element with key {subLevelUdiKey} not found in SPA response.");
-                            spaSubLevelElements.Remove(spaSubLevelElement); // Remove the matched element to avoid duplicate checks
-                            break; // Exit the loop if a match is found
+                            // Remove the matched element to avoid duplicate checks
+                            spaSubLevelElements.Remove(spaSubLevelElement);
+                            // Exit the loop if a match is found
+                            break;
                         }
 
                         spaSubLevelCount--;
@@ -118,106 +121,49 @@ public class SpaApiControllerTests : IntegrationTestBase<Program> {
             }
         });
     }
-}
 
-public class JsonHandler {
-    private readonly HashSet<string> _parsedStrings = new();
+    [Test]
+    [TestCase(TestName = "SpaApiControllerTests - GetData returns expected data for block elements")]
+    [Description("Test to ensure that the GetData method in the SpaApiController returns expected data for block elements.")]
+    public async Task GetData_ReturnsOKWithBlockElementContentType() {
+        // Arrange
+        string pageName = "Alle block-elementer";
+        string url = "api/spa/GetData?apphost=localhost&navLevels=2&navContext=true&url=/da/limbotestarea/test-underforside/alle-block-elementer/&parts=content,site";
+        var jsonHandler = new JsonHandler();
 
-    public List<JToken> InspectForUdi(JToken token) {
-        var result = new List<JToken>();
+        var isNotSettingsData = new IsSettingsData(_invert: true);
+        var isNotPage = new IsPage(_invert: true);
+        ContentCheckBase<TokensContainer> contentCheck = ContentCheckBuilder
+            .Create<SpaResponseBlockElementCheck, TokensContainer>(ServiceProvider)
+            .WithRequirement(isNotSettingsData)
+            .WithRequirement(isNotPage)
+            .WithProjectInitials("LIMBO") // TODO: Fix this to not use project initials
+            .Build();
 
-        // Check if the current token is an object and contains a "udi" property
-        if (token.Type == JTokenType.Object) {
-            var obj = (JObject) token;
-            if (obj.TryGetValue("udi", out _)) {
-                result.Add(obj); // Add the entire object containing the "udi" property
-            }
+        // Act
+        // Get the content from the Umbraco backoffice
+        var entityContent = _entityService.GetAll<IContent>()
+            .FirstOrDefault(x => x.Name == pageName) ?? throw new InvalidOperationException($"Content not found for page: {pageName}");
+        var content = _contentService.GetById(entityContent.Id) ?? throw new InvalidOperationException($"Content not found page: {pageName}");
+        var backofficeContentElements = content.GetValue<string>("contentElements") ?? throw new InvalidOperationException($"Content not found page: {pageName}");
 
-            // Recursively inspect all properties of the object
-            foreach (var prop in obj.Properties()) {
-                result.AddRange(InspectForUdi(prop.Value));
-            }
-        }
-        // Check if the current token is an array and inspect each element
-        else if (token.Type == JTokenType.Array) {
-            foreach (var item in (JArray) token) {
-                result.AddRange(InspectForUdi(item));
-            }
-        }
+        // Get the content from the SPA API controller
+        var spaGetDataResponse = await GetContentAsStringAsync(url);
 
-        return result;
-    }
+        // Parse the JSON strings to JObjects
+        var backofficeContentElementsParsedJson = jsonHandler.ConvertJsonToJObject(backofficeContentElements);
+        var spaResponseParsedJson = jsonHandler.ConvertJsonToJObject(spaGetDataResponse);
 
-    public List<JToken> InspectForKey(JToken token) {
-        var result = new List<JToken>();
+        // Assert
+        // Assert.That(spaResponseParsedJson, Is.Not.Null, "Response is null.");
+        // Assert.That(spaResponseParsedJson, Is.Not.Empty, "Response is empty.");
+        // Assert.That(backofficeContentElementsParsedJson, Is.Not.Null, "Backoffice content is null.");
+        // Assert.That(backofficeContentElementsParsedJson, Is.Not.Empty, "Backoffice content is empty.");
 
-        // Check if the current token is an object and contains a "key" property
-        if (token.Type == JTokenType.Object) {
-            var obj = (JObject) token;
-            if (obj.TryGetValue("key", out _)) {
-                result.Add(obj); // Add the entire object containing the "key" property
-            }
+        // This focuses on the elements on the document (page) only (ie. 'contentData' and 'contentElements')
+        var backofficeTokens = backofficeContentElementsParsedJson.SelectTokens("$..contentData[?(@.udi)]");
+        var spaResponseTokens = spaResponseParsedJson.SelectTokens("$..contentElements[?(@.key)]");
 
-            // Recursively inspect all properties of the object
-            foreach (var prop in obj.Properties()) {
-                result.AddRange(InspectForKey(prop.Value));
-            }
-        }
-        // Check if the current token is an array and inspect each element
-        else if (token.Type == JTokenType.Array) {
-            foreach (var item in (JArray) token) {
-                result.AddRange(InspectForKey(item));
-            }
-        }
-
-        return result;
-    }
-
-    public JObject ConvertJsonToJObject(string json) {
-        JObject root = JObject.Parse(json);
-        RecursivelyParseStrings(root);
-        return root;
-    }
-
-    private JToken RecursivelyParseStrings(JToken token) {
-        if (token.Type == JTokenType.Object) {
-            // Traverse all properties in the object
-            foreach (var prop in ((JObject) token).Properties()) {
-                prop.Value = RecursivelyParseStrings(prop.Value);
-            }
-        } else if (token.Type == JTokenType.Array) {
-            // Traverse all elements in the array
-            var arr = (JArray) token;
-            for (int i = 0; i < arr.Count; i++) {
-                arr[i] = RecursivelyParseStrings(arr[i]);
-            }
-        } else if (token.Type == JTokenType.String) {
-            // Parse strings that might contain JSON
-            return ParseIfJsonString(token);
-        }
-
-        return token;
-    }
-
-    private JToken ParseIfJsonString(JToken token) {
-        string str = token.ToString();
-
-        // Skip parsing if the string has already been parsed
-        if (_parsedStrings.Contains(str)) return token;
-
-        // Check if the string contains JSON-like characters
-        if (str.Contains("{") || str.Contains("[") || str.Contains("]") || str.Contains("}")) {
-            try {
-                // Attempt to parse the string as JSON
-                var parsed = JToken.Parse(str);
-                _parsedStrings.Add(str); // Cache the parsed string
-                RecursivelyParseStrings(parsed); // Recursively parse the new JSON structure
-                return parsed;
-            } catch {
-                // Not valid JSON, return the original string
-            }
-        }
-
-        return token;
+        await contentCheck.RunAssertionsAsync(backofficeTokens, spaResponseTokens);
     }
 }
