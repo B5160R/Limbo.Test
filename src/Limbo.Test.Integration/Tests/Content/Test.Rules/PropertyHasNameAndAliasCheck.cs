@@ -4,7 +4,7 @@ using NUnit.Framework;
 internal sealed class PropertyHasNameAndAliasCheck : ContentCheckBase<DocumentTypeDetails> {
     public PropertyHasNameAndAliasCheck(IReadOnlyCollection<IContentRequirementBase<DocumentTypeDetails>> requirements, string projectInitials) : base(requirements, projectInitials) { }
 
-    protected override ValueTask DoValidateContentAsync(DocumentTypeDetails content) {
+    protected override ValueTask ValidateRulesContentAsync(DocumentTypeDetails content) {
         if (content.Property is null) {
             Assert.Fail($"Property is null for content in Document Type with name: {content.DocumentTypeName}");
             return ValueTask.CompletedTask;

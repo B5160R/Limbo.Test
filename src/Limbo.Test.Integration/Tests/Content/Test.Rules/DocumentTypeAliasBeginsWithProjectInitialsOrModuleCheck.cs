@@ -7,7 +7,7 @@ internal sealed class DocumentTypeAliasBeginsWithProjectInitialsOrModuleCheck : 
         _projectInitials = projectInitials;
     }
 
-    protected override ValueTask DoValidateContentAsync(DocumentTypeDetails content) {
+    protected override ValueTask ValidateRulesContentAsync(DocumentTypeDetails content) {
 
         Assert.That(content, Is.Not.Null, "Content is null");
 

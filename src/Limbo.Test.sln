@@ -2,12 +2,6 @@
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Limbo.Test", "Limbo.Test.xUnit\Limbo.Test.xUnit.csproj", "{88189284-B4F0-4824-80BF-9D3D20639D41}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Limbo.Test.Project.Integration", "Limbo.Test.Project.Integration\Limbo.Test.Project.Integration.csproj", "{CAC1C9C7-B287-4B87-80A6-6DEA5AD189D3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Limbo.Test.NUnit", "Limbo.Test.NUnit\Limbo.Test.NUnit.csproj", "{D7F65203-E83B-4557-9773-B239DA546CAB}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Limbo.Test.Integration", "Limbo.Test.Integration\Limbo.Test.Integration.csproj", "{79B9EF5B-CD7F-4691-967B-B3AA5A52681A}"
 EndProject
 Global

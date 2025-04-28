@@ -6,7 +6,7 @@ internal sealed class PropertyAliasIsUniqueCheck : ContentCheckBase<DocumentType
 
     public PropertyAliasIsUniqueCheck(IReadOnlyCollection<IContentRequirementBase<DocumentTypeDetails>> requirements) : base(requirements) { }
 
-    protected override ValueTask DoValidateContentAsync(DocumentTypeDetails content) {
+    protected override ValueTask ValidateRulesContentAsync(DocumentTypeDetails content) {
         if (content.Property is null) {
             Assert.Fail($"Property is null for content in Document Type with name: {content.DocumentTypeName}");
             return ValueTask.CompletedTask;

@@ -142,11 +142,7 @@ public class SpaApiControllerTests : IntegrationTestBase<Program> {
 
         // Act
         // Get the content from the Umbraco backoffice
-        var entityContent = _entityService.GetAll<IContent>()
-            .FirstOrDefault(x => x.Name == pageName) ?? throw new InvalidOperationException($"Content not found for page: {pageName}");
-        var content = _contentService.GetById(entityContent.Id) ?? throw new InvalidOperationException($"Content not found page: {pageName}");
-        var backofficeContentElements = content.GetValue<string>("contentElements") ?? throw new InvalidOperationException($"Content not found page: {pageName}");
-
+        var backofficeContentElements = GetBackofficeContentElements(pageName);
         // Get the content from the SPA API controller
         var spaGetDataResponse = await GetContentAsStringAsync(url);
 

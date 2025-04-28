@@ -4,7 +4,7 @@ using NUnit.Framework;
 internal sealed class DocumentTypeAliasBeginsWithBlockCheck : ContentCheckBase<DocumentTypeDetails> {
     public DocumentTypeAliasBeginsWithBlockCheck(IReadOnlyCollection<IContentRequirementBase<DocumentTypeDetails>> requirements) : base(requirements) { }
 
-    protected override ValueTask DoValidateContentAsync(DocumentTypeDetails content) {
+    protected override ValueTask ValidateRulesContentAsync(DocumentTypeDetails content) {
 
         Assert.That(content, Is.Not.Null, "Content is null");
 

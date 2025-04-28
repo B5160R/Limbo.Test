@@ -1,7 +1,7 @@
 internal sealed class SpaResponseBlockElementCheck : ContentCheckBase<TokensContainer> {
     public SpaResponseBlockElementCheck(IReadOnlyCollection<IContentRequirementBase<TokensContainer>> requirements, string projectInitials) : base(requirements, projectInitials) { }
 
-    protected override ValueTask DoValidateContentAsync(TokensContainer content) {
+    protected override ValueTask ValidateRulesContentAsync(TokensContainer content) {
         Assert.That(content.backofficeToken, Is.Not.Null, "Backoffice token is null");
         Assert.That(content.spaResponseToken, Is.Not.Null, "SPA response token is null");
 

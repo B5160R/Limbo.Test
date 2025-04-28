@@ -3,6 +3,6 @@ internal sealed class IsOptional : IContentRequirementBase<DocumentTypeDetails> 
 
     // Checks if the property is not mandatory
     public bool IsRequirementMet(DocumentTypeDetails content) {
-        return !content.Property.Mandatory;
+        return content.Property != null && !content.Property.Mandatory;
     }
 }

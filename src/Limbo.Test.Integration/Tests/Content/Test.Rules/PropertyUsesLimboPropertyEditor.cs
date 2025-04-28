@@ -4,10 +4,10 @@ using NUnit.Framework;
 internal sealed class PropertyUsesLimboPropertyEditorCheck : ContentCheckBase<DocumentTypeDetails> {
     public PropertyUsesLimboPropertyEditorCheck(IReadOnlyCollection<IContentRequirementBase<DocumentTypeDetails>> requirements) : base(requirements) { }
 
-    protected override ValueTask DoValidateContentAsync(DocumentTypeDetails content) {
+    protected override ValueTask ValidateRulesContentAsync(DocumentTypeDetails content) {
         // Assert that the property editor alias starts with "Limbo" or "Skybrud"
-        Assert.That(content.Property.PropertyEditorAlias, Does.StartWith("Limbo").Or.StartWith("Skybrud"),
-            $"Property '{content.Property.Name}' on document type '{content.DocumentTypeName}' should use a Limbo property editor.");
+        Assert.That(content.Property?.PropertyEditorAlias, Does.StartWith("Limbo").Or.StartWith("Skybrud"),
+            $"Property '{content.Property?.Name}' on document type '{content.DocumentTypeName}' should use a Limbo property editor.");
 
         return ValueTask.CompletedTask;
     }

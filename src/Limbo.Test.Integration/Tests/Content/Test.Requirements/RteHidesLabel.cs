@@ -15,7 +15,7 @@ internal sealed class RteHidesLabel : IContentRequirementBase<DocumentTypeDetail
     // Checks if the "Hide Label" setting matches the expected value
     public bool IsRequirementMet(DocumentTypeDetails content) {
         // Skip validation if the property is not TinyMCE
-        if (content.Property.PropertyEditorAlias is not "Umbraco.TinyMCE") return true;
+        if (content.Property?.PropertyEditorAlias is not "Umbraco.TinyMCE") return true;
 
         // Get the data type configuration
         var dataType = _dataTypeService.GetDataType(content.Property.DataTypeId);

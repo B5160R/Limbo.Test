@@ -5,23 +5,11 @@ using Umbraco.Cms.Core.Models;
 
 // Abstract base class for performing content checks with requirements
 internal abstract class ContentCheckBase<T>(IReadOnlyCollection<IContentRequirementBase<T>> _requirements, string? projectInitials = null){
-
-    // Validates the content by ensuring all requirements are met
-    private ValueTask<bool> ValidateRequirementsAsync(T content) {
-        // Check each requirement
-        foreach (var requirement in _requirements) {
-            if (!requirement.IsRequirementMet(content)) {
-                // If any requirement is not met, skip further validation
-                return ValueTask.FromResult(false);
-            }
-        }
-        return ValueTask.FromResult(true);
-    }
-
     public async Task RunAssertionsAsync(IEnumerable<JToken> backOfficetokens, IEnumerable<JToken> spaResponseTokens) {
         var jsonHandler = new JsonHandler();
         var tokensContainer = new TokensContainer();
-        await Task.Run(async () => {
+
+        await Task.Run(() => {
             Assert.Multiple(async () => {
                 foreach (var backofficeToken in backOfficetokens) {
 
@@ -42,7 +30,7 @@ internal abstract class ContentCheckBase<T>(IReadOnlyCollection<IContentRequirem
                         subLevelUdiKey = subLevelUdiKey.Replace("umb://element/", string.Empty);
 
                         tokensContainer.backofficeToken = subLevelUdiKey;
-                        
+
                         var isRequirementMet = await ValidateRequirementsAsync((T) (object) tokensContainer);
                         if (!isRequirementMet) continue;
 
@@ -53,6 +41,9 @@ internal abstract class ContentCheckBase<T>(IReadOnlyCollection<IContentRequirem
 
                             if (subLevelUdiKey == subLevelSpaKey) {
                                 tokensContainer.spaResponseToken = subLevelSpaKey;
+
+                                // Validate the rules content for the matched element
+                                await ValidateRulesContentAsync((T) (object) tokensContainer);
 
                                 // Remove the matched element to avoid duplicate checks
                                 spaSubLevelElements.Remove(spaSubLevelElement);
@@ -83,7 +74,7 @@ internal abstract class ContentCheckBase<T>(IReadOnlyCollection<IContentRequirem
                             documentType,
                             documentType.IsElement ? true : false);
                         if (await ValidateRequirementsAsync((T) (object) propertyDetails)) {
-                            await DoValidateContentAsync((T) (object) propertyDetails);
+                            await ValidateRulesContentAsync((T) (object) propertyDetails);
                         }
                         continue;
                     }
@@ -108,6 +99,9 @@ internal abstract class ContentCheckBase<T>(IReadOnlyCollection<IContentRequirem
         });
     }
 
-    // Abstract method to be implemented by derived classes for specific validation logic
-    protected abstract ValueTask DoValidateContentAsync(T content);
+    private ValueTask<bool> ValidateRequirementsAsync(T content) {
+       return ValueTask.FromResult(_requirements.All(requirement => requirement.IsRequirementMet(content)));
+    }
+
+    protected abstract ValueTask ValidateRulesContentAsync(T content);
 }
