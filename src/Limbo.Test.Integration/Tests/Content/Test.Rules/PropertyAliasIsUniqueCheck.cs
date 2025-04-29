@@ -1,5 +1,3 @@
-using NUnit.Framework;
-
 internal sealed class PropertyAliasIsUniqueCheck : ContentCheckBase<DocumentTypeDetails> {
     private readonly HashSet<string> _seenAliases = new();
     private string? _documentTypeName = string.Empty;

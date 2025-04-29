@@ -1,5 +1,3 @@
-using NUnit.Framework;
-
 // Content check to ensure properties have valid names and aliases
 internal sealed class DocumentTypeAliasBeginsWithProjectInitialsOrModuleCheck : ContentCheckBase<DocumentTypeDetails> {
     private readonly string _projectInitials;

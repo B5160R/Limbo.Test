@@ -1,6 +1,4 @@
 using Newtonsoft.Json.Linq;
-using NUglify.JavaScript.Syntax;
-using NUnit.Framework;
 using Umbraco.Cms.Core.Models;
 
 // Abstract base class for performing content checks with requirements
