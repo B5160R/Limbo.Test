@@ -1,6 +1,6 @@
 using NUnit.Framework;
 
-internal sealed class PropertyIsMandatoryCheck : ContentCheckBase<DocumentTypeDetails> {
+internal sealed class PropertyIsMandatoryCheck : PropertyContentCheck<DocumentTypeDetails> {
     public PropertyIsMandatoryCheck(IReadOnlyCollection<IContentRequirementBase<DocumentTypeDetails>> requirements) : base(requirements) { }
 
     protected override ValueTask ValidateRulesContentAsync(DocumentTypeDetails content) {

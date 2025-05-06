@@ -128,16 +128,15 @@ public class SpaApiControllerTests : IntegrationTestBase<Program> {
     public async Task GetData_ReturnsOKWithBlockElementContentType() {
         // Arrange
         string pageName = "Alle block-elementer";
-        string url = "api/spa/GetData?apphost=localhost&navLevels=2&navContext=true&url=/da/limbotestarea/test-underforside/alle-block-elementer/&parts=content,site";
+        string url = "api/spa/GetData?apphost=localhost&navLevels=2&navContext=false&url=/da/limbotestarea/test-underforside/alle-block-elementer/&parts=content";
         var jsonHandler = new JsonHandler();
 
         var isNotSettingsData = new IsSettingsData(_invert: true);
         var isNotPage = new IsPage(_invert: true);
-        ContentCheckBase<TokensContainer> contentCheck = ContentCheckBuilder
-            .Create<SpaResponseBlockElementCheck, TokensContainer>(ServiceProvider)
+        SpaContentCheck<TokensContainer> contentCheck = ContentCheckBuilder
+            .CreateSpaCheck<SpaResponseBlockElementCheck, TokensContainer>(ServiceProvider)
             .WithRequirement(isNotSettingsData)
             .WithRequirement(isNotPage)
-            .WithProjectInitials("LIMBO") // TODO: Fix this to not use project initials
             .Build();
 
         // Act

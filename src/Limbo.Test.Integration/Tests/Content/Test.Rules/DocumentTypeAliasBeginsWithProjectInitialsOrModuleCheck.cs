@@ -1,5 +1,5 @@
 // Content check to ensure properties have valid names and aliases
-internal sealed class DocumentTypeAliasBeginsWithProjectInitialsOrModuleCheck : ContentCheckBase<DocumentTypeDetails> {
+internal sealed class DocumentTypeAliasBeginsWithProjectInitialsOrModuleCheck : PropertyContentCheck<DocumentTypeDetails> {
     private readonly string _projectInitials;
     public DocumentTypeAliasBeginsWithProjectInitialsOrModuleCheck(IReadOnlyCollection<IContentRequirementBase<DocumentTypeDetails>> requirements, string projectInitials) : base(requirements, projectInitials) {
         _projectInitials = projectInitials;

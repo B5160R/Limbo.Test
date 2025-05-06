@@ -1,7 +1,7 @@
 using NUnit.Framework;
 
 // Content check to ensure properties use Limbo or Skybrud property editors
-internal sealed class PropertyUsesLimboPropertyEditorCheck : ContentCheckBase<DocumentTypeDetails> {
+internal sealed class PropertyUsesLimboPropertyEditorCheck : PropertyContentCheck<DocumentTypeDetails> {
     public PropertyUsesLimboPropertyEditorCheck(IReadOnlyCollection<IContentRequirementBase<DocumentTypeDetails>> requirements) : base(requirements) { }
 
     protected override ValueTask ValidateRulesContentAsync(DocumentTypeDetails content) {

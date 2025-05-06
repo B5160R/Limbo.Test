@@ -29,8 +29,9 @@ public class ContentSettingsTests : IntegrationTestBase<Program> {
         var doesNotUseAliasSettings = new UsesAlias("settings", _invert: true);
 
         // Build content check
-        ContentCheckBase<DocumentTypeDetails> contentCheck = ContentCheckBuilder
-            .Create<DocumentTypeAliasBeginsWithBlockCheck, DocumentTypeDetails>(ServiceProvider)
+        PropertyContentCheck<DocumentTypeDetails> contentCheck = ContentCheckBuilder
+            .CreatePropertyCheck<DocumentTypeAliasBeginsWithBlockCheck, DocumentTypeDetails>(ServiceProvider)
+            .WithProjectInitials("he")
             .WithRequirement(isElementType)
             .WithRequirement(doesNotUseAliasSeo)
             .WithRequirement(doesNotUseAliasSettings)
@@ -47,8 +48,8 @@ public class ContentSettingsTests : IntegrationTestBase<Program> {
         var isNotElementType = new IsElementType(_invert: true);
 
         // Build content check
-        ContentCheckBase<DocumentTypeDetails> contentCheck = ContentCheckBuilder
-            .Create<DocumentTypeAliasBeginsWithProjectInitialsOrModuleCheck, DocumentTypeDetails>(ServiceProvider)
+        PropertyContentCheck<DocumentTypeDetails> contentCheck = ContentCheckBuilder
+            .CreatePropertyCheck<DocumentTypeAliasBeginsWithProjectInitialsOrModuleCheck, DocumentTypeDetails>(ServiceProvider)
             .WithProjectInitials("he")
             .WithRequirement(isNotElementType)
             .Build();
@@ -62,8 +63,8 @@ public class ContentSettingsTests : IntegrationTestBase<Program> {
     public async Task Validate_all_Umbraco_document_type_properties_has_Name_and_Alias() {
         // Arrange
         // Build content check
-        ContentCheckBase<DocumentTypeDetails> contentCheck = ContentCheckBuilder
-            .Create<PropertyHasNameAndAliasCheck, DocumentTypeDetails>(ServiceProvider)
+        PropertyContentCheck<DocumentTypeDetails> contentCheck = ContentCheckBuilder
+            .CreatePropertyCheck<PropertyHasNameAndAliasCheck, DocumentTypeDetails>(ServiceProvider)
             .Build();
 
         // Act: Validate each document type and its properties
@@ -75,8 +76,8 @@ public class ContentSettingsTests : IntegrationTestBase<Program> {
     public async Task Validate_all_Umbraco_document_type_properties_has_unique_Alias() {
         // Arrange
         // Build content check
-        ContentCheckBase<DocumentTypeDetails> contentCheck = ContentCheckBuilder
-            .Create<PropertyAliasIsUniqueCheck, DocumentTypeDetails>(ServiceProvider)
+        PropertyContentCheck<DocumentTypeDetails> contentCheck = ContentCheckBuilder
+            .CreatePropertyCheck<PropertyAliasIsUniqueCheck, DocumentTypeDetails>(ServiceProvider)
             .Build();
 
         // Act: Validate each document type and its properties
@@ -100,8 +101,8 @@ public class ContentSettingsTests : IntegrationTestBase<Program> {
         var doesNotUseBlocklist = new UsesPropertyEditor("Umbraco.BlockList", _invert: true);
 
         // Build content check
-        ContentCheckBase<DocumentTypeDetails> contentCheck = ContentCheckBuilder
-            .Create<PropertyUsesLimboPropertyEditorCheck, DocumentTypeDetails>(ServiceProvider)
+        PropertyContentCheck<DocumentTypeDetails> contentCheck = ContentCheckBuilder
+            .CreatePropertyCheck<PropertyUsesLimboPropertyEditorCheck, DocumentTypeDetails>(ServiceProvider)
             .WithRequirement(doesNotUseMultipleTextstring)
             .WithRequirement(doesNotUseRadioButtonList)
             .WithRequirement(doesNotUseUserPicker)

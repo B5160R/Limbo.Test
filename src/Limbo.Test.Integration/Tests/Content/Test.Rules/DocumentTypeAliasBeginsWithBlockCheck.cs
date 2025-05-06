@@ -1,6 +1,6 @@
 // Content check to ensure properties have valid names and aliases
-internal sealed class DocumentTypeAliasBeginsWithBlockCheck : ContentCheckBase<DocumentTypeDetails> {
-    public DocumentTypeAliasBeginsWithBlockCheck(IReadOnlyCollection<IContentRequirementBase<DocumentTypeDetails>> requirements) : base(requirements) { }
+internal sealed class DocumentTypeAliasBeginsWithBlockCheck : PropertyContentCheck<DocumentTypeDetails> {
+    public DocumentTypeAliasBeginsWithBlockCheck(IReadOnlyCollection<IContentRequirementBase<DocumentTypeDetails>> requirements, string projectInitials) : base(requirements, projectInitials) { }
 
     protected override ValueTask ValidateRulesContentAsync(DocumentTypeDetails content) {
 

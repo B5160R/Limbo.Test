@@ -1,8 +1,6 @@
 using Newtonsoft.Json.Linq;
-using Umbraco.Cms.Core.Models;
 
-// Abstract base class for performing content checks with requirements
-internal abstract class ContentCheckBase<T>(IReadOnlyCollection<IContentRequirementBase<T>> _requirements, string? projectInitials = null){
+internal abstract class SpaContentCheck<T>(IReadOnlyCollection<IContentRequirementBase<T>> _requirements){
     public async Task RunAssertionsAsync(IEnumerable<JToken> backOfficetokens, IEnumerable<JToken> spaResponseTokens) {
         var jsonHandler = new JsonHandler();
         var tokensContainer = new TokensContainer();
@@ -15,7 +13,6 @@ internal abstract class ContentCheckBase<T>(IReadOnlyCollection<IContentRequirem
                     var backOfficeUdi = backofficeToken.SelectToken("udi")?.ToString();
                     backOfficeUdi = backOfficeUdi?.Replace("umb://element/", string.Empty) ?? string.Empty;
 
-                    // TODO: Investigate if this can be done using InspectForKey() instead.
                     var spaResponseToken = spaResponseTokens.FirstOrDefault(e => e.SelectToken("key")?.ToString().Replace("-", string.Empty) == backOfficeUdi);
 
                     var backOfficeSubLevelTokens = jsonHandler.InspectForUdi(backofficeToken);
@@ -54,43 +51,6 @@ internal abstract class ContentCheckBase<T>(IReadOnlyCollection<IContentRequirem
                                 Assert.Fail($"Sub-level element with key {subLevelUdiKey} not found in SPA response.");
                             }
                         }
-                    }
-                }
-            });
-        });
-    }
-
-    public async Task RunAssertionsAsync(IEnumerable<IContentType> contentTypes, bool runForProperties) {
-        await Task.Run(() => {
-            Assert.Multiple(async () => {
-                foreach (var documentType in contentTypes) {
-
-                    if (runForProperties is false) {
-                        var propertyDetails = new DocumentTypeDetails(
-                            documentType.Name,
-                            null,
-                            documentType,
-                            documentType.IsElement ? true : false);
-                        if (await ValidateRequirementsAsync((T) (object) propertyDetails)) {
-                            await ValidateRulesContentAsync((T) (object) propertyDetails);
-                        }
-                        continue;
-                    }
-
-                    // Combine properties from groups and no-group properties
-                    var allPropertyTypes = documentType.NoGroupPropertyTypes.Concat(
-                        documentType.PropertyGroups.SelectMany(pg => pg.PropertyTypes
-                            ?? Enumerable.Empty<IPropertyType>()));
-
-                    foreach (var property in allPropertyTypes) {
-                        // Create property details for validation
-                        var propertyDetails = new DocumentTypeDetails(
-                            documentType.Name,
-                            property,
-                            documentType,
-                            documentType.IsElement ? true : false);
-
-                        await ValidateRequirementsAsync((T) (object) propertyDetails);
                     }
                 }
             });

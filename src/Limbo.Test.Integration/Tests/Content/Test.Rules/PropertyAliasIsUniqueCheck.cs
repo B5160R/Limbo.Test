@@ -1,4 +1,4 @@
-internal sealed class PropertyAliasIsUniqueCheck : ContentCheckBase<DocumentTypeDetails> {
+internal sealed class PropertyAliasIsUniqueCheck : PropertyContentCheck<DocumentTypeDetails> {
     private readonly HashSet<string> _seenAliases = new();
     private string? _documentTypeName = string.Empty;
 
