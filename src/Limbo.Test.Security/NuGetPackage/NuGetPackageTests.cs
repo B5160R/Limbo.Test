@@ -17,7 +17,8 @@ public class NuGetPackageTests {
     public NuGetPackageTests() {
         // Set the solution directory to the parent of the current directory
         // This assumes that the test project is in a subdirectory of the solution directory
-        _solutionDirectory = Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.Parent?.Parent?.FullName ?? throw new DirectoryNotFoundException("Solution directory not found.");
+        _solutionDirectory = Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.Parent?.Parent?.FullName
+            ?? throw new DirectoryNotFoundException("Solution directory not found.");
         _projectFiles = Directory.GetFiles(_solutionDirectory, "*.csproj", SearchOption.AllDirectories);
     }
 
