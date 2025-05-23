@@ -7,13 +7,10 @@ using Umbraco.Cms.Core.Services;
 
 public abstract class IntegrationTestBase<TProgram> where TProgram : class {
 
-    protected CustomWebApplicationFactory<TProgram> WebsiteFactory;
+    protected CustomWebApplicationFactory<TProgram>? WebsiteFactory;
     protected AsyncServiceScope Scope { get; private set; }
     protected IServiceProvider ServiceProvider => Scope.ServiceProvider;
 
-    protected virtual CustomWebApplicationFactory<TProgram> CreateApplicationFactory() {
-        return new CustomWebApplicationFactory<TProgram>();
-    }
 
     [OneTimeSetUp]
     public virtual void Setup() {
@@ -24,11 +21,29 @@ public abstract class IntegrationTestBase<TProgram> where TProgram : class {
     [OneTimeTearDown]
     public virtual void TearDown() {
         Scope.Dispose();
-        WebsiteFactory.Dispose();
+
+        if (WebsiteFactory is null) {
+            throw new InvalidOperationException();
+        } else {
+            WebsiteFactory.Dispose();
+        }
     }
 
-    protected virtual HttpClient Client
-        => WebsiteFactory.CreateCustomClient();
+    protected virtual HttpClient Client {
+        get {
+            if (WebsiteFactory is null) {
+                throw new InvalidOperationException();
+            } else {
+                return WebsiteFactory.CreateCustomClient();
+            }
+        }
+    }
+
+    protected virtual IEnumerable<IContentType> GetAllContentTypes() {
+        var contentTypeService = GetService<IContentTypeService>();
+        var contentTypes = contentTypeService.GetAll();
+        return contentTypes;
+    }
 
     protected virtual async Task<T> GetAsync<T>(string url) {
         var response = await Client.GetAsync(url);
@@ -60,4 +75,7 @@ public abstract class IntegrationTestBase<TProgram> where TProgram : class {
     protected virtual IOptions<GlobalSettings> GetGlobalSettings()
         => Scope.ServiceProvider.GetRequiredService<IOptions<GlobalSettings>>();
 
+    private CustomWebApplicationFactory<TProgram> CreateApplicationFactory() {
+        return new CustomWebApplicationFactory<TProgram>();
+    }
 }

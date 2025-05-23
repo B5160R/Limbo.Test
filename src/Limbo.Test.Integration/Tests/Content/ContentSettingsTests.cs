@@ -10,14 +10,12 @@ using Umbraco.Cms.Core.Services;
 [Description("Integration tests for validating Umbraco content settings.")]
 [TestOf(typeof(ContentSettingsTests))]
 public class ContentSettingsTests : IntegrationTestBase<Program> {
-    private IContentTypeService _contentTypeService;
     private IEnumerable<IContentType> _contentTypes;
 
     [SetUp]
     public override void Setup() {
         base.Setup();
-        _contentTypeService = GetService<IContentTypeService>();
-        _contentTypes = _contentTypeService.GetAll();
+        _contentTypes = GetAllContentTypes();
     }
 
     [Test]
