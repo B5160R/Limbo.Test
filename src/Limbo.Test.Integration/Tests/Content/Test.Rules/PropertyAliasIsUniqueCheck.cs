@@ -2,7 +2,8 @@ internal sealed class PropertyAliasIsUniqueCheck : PropertyContentCheck<Document
     private readonly HashSet<string> _seenAliases = new();
     private string? _documentTypeName = string.Empty;
 
-    public PropertyAliasIsUniqueCheck(IReadOnlyCollection<IContentRequirementBase<DocumentTypeDetails>> requirements) : base(requirements) { }
+    public PropertyAliasIsUniqueCheck(IReadOnlyCollection<IContentRequirementBase<DocumentTypeDetails>> requirements,
+        string projectInitials) : base(requirements, projectInitials) { }
 
     protected override ValueTask ValidateRulesContentAsync(DocumentTypeDetails content) {
         if (content.Property is null) {

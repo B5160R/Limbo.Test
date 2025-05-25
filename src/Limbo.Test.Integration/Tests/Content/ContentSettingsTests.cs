@@ -25,6 +25,7 @@ public class ContentSettingsTests : IntegrationTestBase<Program> {
         var isElementType = new IsElementType();
         var doesNotUseAliasSeo = new UsesAlias("seo", _invert: true);
         var doesNotUseAliasSettings = new UsesAlias("settings", _invert: true);
+        var doesNotUseAliasTestForsideElement = new UsesAlias("forsideElement", _invert: true);
 
         // Build content check
         PropertyContentCheck<DocumentTypeDetails> contentCheck = ContentCheckBuilder
@@ -33,6 +34,7 @@ public class ContentSettingsTests : IntegrationTestBase<Program> {
             .WithRequirement(isElementType)
             .WithRequirement(doesNotUseAliasSeo)
             .WithRequirement(doesNotUseAliasSettings)
+            .WithRequirement(doesNotUseAliasTestForsideElement)
             .Build();
 
         // Act: Validate each document type and its properties

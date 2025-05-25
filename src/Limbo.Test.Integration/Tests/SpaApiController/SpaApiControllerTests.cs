@@ -38,10 +38,12 @@ public class SpaApiControllerTests : IntegrationTestBase<Program> {
 
         var isNotSettingsData = new IsSettingsData(_invert: true);
         var isNotPage = new IsPage(_invert: true);
+        var isNotVideoBlock = new IsVideoBlock(_invert: true);
         SpaContentCheck<TokensContainer> contentCheck = ContentCheckBuilder
             .CreateSpaCheck<SpaResponseBlockElementCheck, TokensContainer>(ServiceProvider)
             .WithRequirement(isNotSettingsData)
             .WithRequirement(isNotPage)
+            .WithRequirement(isNotVideoBlock) // Video blocks are not accessible in the SPA response by key
             .Build();
 
         // Act

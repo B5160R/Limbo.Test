@@ -1,64 +1,85 @@
 using Newtonsoft.Json.Linq;
 
-internal abstract class SpaContentCheck<T>(IReadOnlyCollection<IContentRequirementBase<T>> _requirements){
+internal abstract class SpaContentCheck<T>(IReadOnlyCollection<IContentRequirementBase<T>> _requirements) {
     public async Task RunAssertionsAsync(IEnumerable<JToken> backOfficetokens, IEnumerable<JToken> spaResponseTokens) {
         var jsonHandler = new JsonHandler();
         var tokensContainer = new TokensContainer();
 
-        await Task.Run(() => {
-            Assert.Multiple(async () => {
-                foreach (var backofficeToken in backOfficetokens) {
+        var assertionSuccesses = new List<string>();
+        var assertionFailures = new List<string>();
 
-                    // Selects the first token from the SPA response that matches the UDI of the backoffice root token
-                    var backOfficeUdi = backofficeToken.SelectToken("udi")?.ToString();
-                    backOfficeUdi = backOfficeUdi?.Replace("umb://element/", string.Empty) ?? string.Empty;
+        foreach (var backofficeToken in backOfficetokens) {
+            var backOfficeUdi = backofficeToken.SelectToken("udi")?.ToString();
+            backOfficeUdi = backOfficeUdi?.Replace("umb://element/", string.Empty) ?? string.Empty;
 
-                    var spaResponseToken = spaResponseTokens.FirstOrDefault(e => e.SelectToken("key")?.ToString().Replace("-", string.Empty) == backOfficeUdi);
+            var spaResponseToken = spaResponseTokens.FirstOrDefault(e => e.SelectToken("key")?.ToString().Replace("-", string.Empty) == backOfficeUdi);
 
-                    var backOfficeSubLevelTokens = jsonHandler.InspectForUdi(backofficeToken);
-                    var spaSubLevelElements = jsonHandler.InspectForKey(spaResponseToken);
+            var backOfficeSubLevelTokens = jsonHandler.InspectForUdi(backofficeToken);
+            var spaSubLevelElements = jsonHandler.InspectForKey(spaResponseToken);
 
-                    int backOfficeSubLevelCount = backOfficeSubLevelTokens.Count;
+            foreach (var backOfficeSubLevelToken in backOfficeSubLevelTokens) {
+                var subLevelUdiKey = string.Empty;
+                    subLevelUdiKey = backOfficeSubLevelToken.SelectToken("udi")?.ToString() ?? string.Empty;
+                    subLevelUdiKey = subLevelUdiKey.Replace("umb://element/", string.Empty);
 
-                    foreach (var backOfficeSubLevelToken in backOfficeSubLevelTokens) {
-                        var subLevelUdiKey = backOfficeSubLevelToken.SelectToken("udi")?.ToString() ?? string.Empty;
-                        subLevelUdiKey = subLevelUdiKey.Replace("umb://element/", string.Empty);
+                if (assertionSuccesses.Contains(subLevelUdiKey) is true) {
+                    Console.WriteLine($"Sub-level element with key {subLevelUdiKey} already asserted successfully.");
+                    continue; // Skip if already asserted successfully
+                }
 
-                        tokensContainer.backofficeToken = subLevelUdiKey;
+                tokensContainer.backofficeToken = backOfficeSubLevelToken;
+                tokensContainer.backofficeUdi = subLevelUdiKey;
 
-                        var isRequirementMet = await ValidateRequirementsAsync((T) (object) tokensContainer);
-                        if (!isRequirementMet) continue;
+                var isRequirementMet = await ValidateRequirementsAsync((T) (object) tokensContainer);
+                if (!isRequirementMet) {
+                    Console.WriteLine($"Requirement not met for backoffice token with UDI {subLevelUdiKey}.");
+                    continue;
+                }
 
-                        int spaSubLevelCount = spaSubLevelElements.Count;
-                        foreach (var spaSubLevelElement in spaSubLevelElements) {
-                            var subLevelSpaKey = spaSubLevelElement.SelectToken("key")?.ToString() ?? string.Empty;
-                            subLevelSpaKey = subLevelSpaKey.Replace("-", string.Empty);
+                bool found = false;
+                foreach (var spaSubLevelElement in spaSubLevelElements.ToList()) {
 
-                            if (subLevelUdiKey == subLevelSpaKey) {
-                                tokensContainer.spaResponseToken = subLevelSpaKey;
+                    var subLevelSpaKey = string.Empty;
 
-                                // Validate the rules content for the matched element
-                                await ValidateRulesContentAsync((T) (object) tokensContainer);
+                    if (spaSubLevelElement.SelectToken("image") is not null) {
+                        subLevelSpaKey = spaSubLevelElement.Parent?.SelectToken("key")?.ToString() ?? string.Empty;
+                    }
+                    else {
+                        subLevelSpaKey = spaSubLevelElement.SelectToken("key")?.ToString() ?? string.Empty;
+                    }
 
-                                // Remove the matched element to avoid duplicate checks
-                                spaSubLevelElements.Remove(spaSubLevelElement);
-                                // Exit the loop if a match is found
-                                break;
-                            }
+                    subLevelSpaKey = subLevelSpaKey.Replace("-", string.Empty);
 
-                            spaSubLevelCount--;
-                            if (spaSubLevelCount == 0) {
-                                Assert.Fail($"Sub-level element with key {subLevelUdiKey} not found in SPA response.");
-                            }
+                    if (subLevelUdiKey == subLevelSpaKey) {
+                        assertionSuccesses.Add(subLevelUdiKey);
+                        tokensContainer.spaResponseToken = spaSubLevelElement;
+                        tokensContainer.spaResponseKey = subLevelSpaKey;
+                        await ValidateRulesContentAsync((T) (object) tokensContainer);
+                        try {
+                            await ValidateRulesContentAsync((T) (object) tokensContainer);
+                        } catch (AssertionException ex) {
+                            assertionFailures.Add(ex.Message);
                         }
+                        spaSubLevelElements.Remove(spaSubLevelElement);
+                        found = true;
+                        break;
                     }
                 }
-            });
+                if (!found) {
+                    assertionFailures.Add($"Sub-level element with key {subLevelUdiKey} not found in SPA response.");
+                }
+            }
+        }
+
+        Assert.Multiple(() => {
+            foreach (var failure in assertionFailures) {
+                Assert.Fail(failure);
+            }
         });
     }
 
     private ValueTask<bool> ValidateRequirementsAsync(T content) {
-       return ValueTask.FromResult(_requirements.All(requirement => requirement.IsRequirementMet(content)));
+        return ValueTask.FromResult(_requirements.All(requirement => requirement.IsRequirementMet(content)));
     }
 
     protected abstract ValueTask ValidateRulesContentAsync(T content);

@@ -41,6 +41,8 @@ public class JsonHandler {
 
             // Recursively inspect all properties of the object
             foreach (var prop in obj.Properties()) {
+                // If the property is "image", skip recursing into its value
+                if (prop.Name == "image") continue;
                 result.AddRange(InspectForKey(prop.Value));
             }
         }

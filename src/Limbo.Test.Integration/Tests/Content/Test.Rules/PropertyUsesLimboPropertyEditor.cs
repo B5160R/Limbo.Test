@@ -2,7 +2,8 @@ using NUnit.Framework;
 
 // Content check to ensure properties use Limbo or Skybrud property editors
 internal sealed class PropertyUsesLimboPropertyEditorCheck : PropertyContentCheck<DocumentTypeDetails> {
-    public PropertyUsesLimboPropertyEditorCheck(IReadOnlyCollection<IContentRequirementBase<DocumentTypeDetails>> requirements) : base(requirements) { }
+    public PropertyUsesLimboPropertyEditorCheck(IReadOnlyCollection<IContentRequirementBase<DocumentTypeDetails>> requirements,
+        string projectInitials) : base(requirements, projectInitials) { }
 
     protected override ValueTask ValidateRulesContentAsync(DocumentTypeDetails content) {
         // Assert that the property editor alias starts with "Limbo" or "Skybrud"
