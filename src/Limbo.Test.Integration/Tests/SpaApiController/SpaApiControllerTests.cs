@@ -7,6 +7,7 @@ using Herningsholm.Web;
 [Description("Integration tests for validating SPA API controller return data.")]
 [TestOf(typeof(SpaApiControllerTests))]
 public class SpaApiControllerTests : IntegrationTestBase<Program> {
+    private readonly JsonHandler _jsonHandler = new JsonHandler();
 
     [SetUp]
     public override void Setup() {
@@ -34,7 +35,6 @@ public class SpaApiControllerTests : IntegrationTestBase<Program> {
         // Arrange
         string pageName = "Alle block-elementer";
         string url = "api/spa/GetData?apphost=localhost&navLevels=2&navContext=false&url=/da/limbotestarea/test-underforside/alle-block-elementer/&parts=content";
-        var jsonHandler = new JsonHandler();
 
         var isNotSettingsData = new IsSettingsData(_invert: true);
         var isNotPage = new IsPage(_invert: true);
@@ -53,13 +53,13 @@ public class SpaApiControllerTests : IntegrationTestBase<Program> {
         var spaGetDataResponse = await GetContentAsStringAsync(url);
 
         // Parse the JSON strings to JObjects
-        var backofficeContentElementsParsedJson = jsonHandler.ConvertJsonToJObject(backofficeContentElements);
-        var spaResponseParsedJson = jsonHandler.ConvertJsonToJObject(spaGetDataResponse);
+        var backofficeContentElementsParsedJson = _jsonHandler.ConvertJsonToJObject(backofficeContentElements);
+        var spaResponseParsedJson = _jsonHandler.ConvertJsonToJObject(spaGetDataResponse);
 
         // This focuses on the elements on the document (page) only (ie. 'contentData' and 'contentElements')
         var backofficeTokens = backofficeContentElementsParsedJson.SelectTokens("$..contentData[?(@.udi)]");
         var spaResponseTokens = spaResponseParsedJson.SelectTokens("$..contentElements[?(@.key)]");
 
-        await contentCheck.RunAssertionsAsync(backofficeTokens, spaResponseTokens);
+        await contentCheck.RunAssertionsAsync(_jsonHandler, backofficeTokens, spaResponseTokens);
     }
 }

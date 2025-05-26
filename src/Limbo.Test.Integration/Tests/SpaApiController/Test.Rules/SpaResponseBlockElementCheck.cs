@@ -9,7 +9,6 @@ internal sealed class SpaResponseBlockElementCheck : SpaContentCheck<TokensConta
 
         Assert.That(content.backofficeUdi, Is.EquivalentTo(content.spaResponseKey), $"Sub-level element with key {content.backofficeToken} not found in SPA response.");
 
-
         // Assert.That(JToken.DeepEquals(content.backofficeToken, content.spaResponseToken), Is.True, $"Sub-level element content with key {content.backofficeToken} is not equal with SPA response.");
 
         return ValueTask.CompletedTask;

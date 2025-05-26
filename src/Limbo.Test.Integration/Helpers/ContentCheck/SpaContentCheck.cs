@@ -1,8 +1,8 @@
 using Newtonsoft.Json.Linq;
 
 internal abstract class SpaContentCheck<T>(IReadOnlyCollection<IContentRequirementBase<T>> _requirements) {
-    public async Task RunAssertionsAsync(IEnumerable<JToken> backOfficetokens, IEnumerable<JToken> spaResponseTokens) {
-        var jsonHandler = new JsonHandler();
+    public async Task RunAssertionsAsync(JsonHandler jsonHandler, IEnumerable<JToken> backOfficetokens, IEnumerable<JToken> spaResponseTokens) {
+        jsonHandler ??= new JsonHandler();
         var tokensContainer = new TokensContainer();
 
         var assertionSuccesses = new List<string>();
@@ -54,12 +54,14 @@ internal abstract class SpaContentCheck<T>(IReadOnlyCollection<IContentRequireme
                         assertionSuccesses.Add(subLevelUdiKey);
                         tokensContainer.spaResponseToken = spaSubLevelElement;
                         tokensContainer.spaResponseKey = subLevelSpaKey;
+
                         await ValidateRulesContentAsync((T) (object) tokensContainer);
                         try {
                             await ValidateRulesContentAsync((T) (object) tokensContainer);
                         } catch (AssertionException ex) {
                             assertionFailures.Add(ex.Message);
                         }
+                        
                         spaSubLevelElements.Remove(spaSubLevelElement);
                         found = true;
                         break;

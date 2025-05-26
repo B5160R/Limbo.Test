@@ -1,6 +1,6 @@
 using Newtonsoft.Json.Linq;
 
-public class TokensContainer {
+internal class TokensContainer {
     public JToken? backofficeToken;
     public JToken? spaResponseToken;
     public string? backofficeUdi;

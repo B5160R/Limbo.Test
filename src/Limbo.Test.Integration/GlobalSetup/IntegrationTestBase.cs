@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -10,12 +11,14 @@ public abstract class IntegrationTestBase<TProgram> where TProgram : class {
     protected CustomWebApplicationFactory<TProgram>? WebsiteFactory;
     protected AsyncServiceScope Scope { get; private set; }
     protected IServiceProvider ServiceProvider => Scope.ServiceProvider;
+    protected IConfiguration Configuration { get; private set; }
 
 
     [OneTimeSetUp]
     public virtual void Setup() {
         WebsiteFactory = CreateApplicationFactory();
         Scope = WebsiteFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateAsyncScope();
+        Configuration = Scope.ServiceProvider.GetRequiredService<IConfiguration>();
     }
 
     [OneTimeTearDown]
@@ -34,7 +37,10 @@ public abstract class IntegrationTestBase<TProgram> where TProgram : class {
             if (WebsiteFactory is null) {
                 throw new InvalidOperationException();
             } else {
-                return WebsiteFactory.CreateCustomClient();
+                var baseAddress = Configuration.GetValue<string>("Local_BaseAddress")
+                    ?? throw new InvalidOperationException("Base address not configured in appsettings.Test.json");
+                var uri = new Uri(baseAddress);
+                return WebsiteFactory.CreateCustomClient(uri);
             }
         }
     }

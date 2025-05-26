@@ -1,23 +1,32 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProgram> where TProgram : class {
 
-    public HttpClient CreateCustomClient() {
+    public HttpClient CreateCustomClient(Uri baseAddress) {
         HttpClient client = CreateClient();
-        client.BaseAddress = new Uri("https://localhost:10280/umbraco/");
+        // Set the base address for the client
+        client.BaseAddress = baseAddress;
+
+        // client.BaseAddress = new Uri("https://localhost:10280/umbraco/");
 
         return client;
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder) {
         var projectDir = Directory.GetCurrentDirectory();
-        var configPath = Path.Combine(projectDir, "appsettings.Tests.json");
+        var configPath = Path.Combine(projectDir, "appsettings.Test.json");
 
         builder.ConfigureAppConfiguration(conf => {
             conf.AddJsonFile(configPath);
+        });
+
+        builder.ConfigureServices((context, services) => {
+            var configuration = context.Configuration;
+            services.AddSingleton(configuration);
         });
 
         builder.ConfigureServices(services => {
