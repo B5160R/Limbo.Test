@@ -1,1 +1,1 @@
-This repository is intended to accompany the BA report "Limbo.Test: Implementering af Automatiserede Tests"; thus, it does not (and will not) represent the finished product.
+This repository is intended to accompany the BA report "Design og Implementering af Limbo.Test"; thus, it does not (and will not) represent the finished product.
