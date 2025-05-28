@@ -4,7 +4,9 @@ public class AllowedLicsenses {
         yield return new HashSet<string> {
             "MIT",
             "Microsoft",
-            "Apache-2.0"
+            "Apache-2.0",
+            "NUnit",
+            "Charlie Poole, Rob Prouse"
         };
     }
 }

@@ -2,7 +2,8 @@ namespace Limbo.Test.Security.NuGetPackage.Models.ValidationModels;
 public class AllowedNuGetVersions {
     public static object[] GetTestCases =
     {
-        new object[] { "Swashbuckle.AspNetCore", "6.6.2", "" },
-        new object[] { "NUnit", "4.2.2", "Limbo.Test.Security"}
+        // new object[] { "NUnit.Analyzers", "4.4.0", "Limbo.Test.Integration" },
+        new object[] { "NUnit.Analyzers", "4.4.0", "Limbo.Test.Security" },
+        new object[] { "NUnit", "4.3.2", ""}
     };
 }

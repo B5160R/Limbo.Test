@@ -56,8 +56,8 @@ public class NuGetPackageTests {
         }
 
         //Assert
-        Assert.That(restrictedNuGetPackages, Is.Empty, "The following NuGet packages are not allowed: " +
-            string.Join(", ", restrictedNuGetPackages.Select(p => $"{p.NuGetPackage} ({p.Version}) in {p.Project} with license {p.License}")));
+        Assert.That(restrictedNuGetPackages, Is.Empty, "Restricted NuGet packages found:\n" +
+            string.Join("\n", restrictedNuGetPackages.Select(p => $"- {p.NuGetPackage} ({p.Version}) in {p.Project} [License: {p.License}]")));
     }
 
     [Test]
@@ -93,9 +93,6 @@ public class NuGetPackageTests {
     [TestCaseSource(typeof(AllowedNuGetVersions), nameof(AllowedNuGetVersions.GetTestCases))]
     public void Validate_NuGetPackages_Has_Allowed_Versions(string nugetPackageName, string version, string projectName) {
         //Arrange
-        if (string.IsNullOrEmpty(projectName)) {
-            projectName = string.Empty;
-        }
         var projectFiles = Array.Empty<string>();
         // if projectName is empty get all project files
         if (string.IsNullOrEmpty(projectName)) {
@@ -112,8 +109,14 @@ public class NuGetPackageTests {
             packages.AddRange(ListNuGetPackages(projectFile).ToList());
         }
 
+        List<PackageInfo> packageInProjects = packages .Where(p => p.NuGetPackage.Equals(nugetPackageName, StringComparison.OrdinalIgnoreCase)) .ToList();
+
         //Assert
-        Assert.That(packages.FirstOrDefault(p => p.NuGetPackage == nugetPackageName)?.Version, Is.EqualTo(version));
+        Assert.Multiple(() => {
+            foreach (var package in packageInProjects) {
+                Assert.That(package.Version, Is.EqualTo(version), $"The package '{nugetPackageName}' in project '{package.Project}' does not have the expected version '{version}'. Actual version: '{package.Version}'.");
+            }
+        });
     }
 
 

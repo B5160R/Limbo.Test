@@ -33,7 +33,9 @@ internal abstract class PropertyContentCheck<T>(IReadOnlyCollection<IContentRequ
                             documentType,
                             documentType.IsElement ? true : false);
 
-                        await ValidateRequirementsAsync((T) (object) propertyDetails);
+                        if (await ValidateRequirementsAsync((T) (object) propertyDetails)) {
+                            await ValidateRulesContentAsync((T) (object) propertyDetails);
+                        }
                     }
                 }
             });

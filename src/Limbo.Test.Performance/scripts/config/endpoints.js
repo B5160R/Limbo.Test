@@ -6,6 +6,7 @@ export const endpoints = {
   ],
   load: [
     '/umbraco/api/spa/GetData?apphost=localhost&navLevels=2&navContext=true&url=/da/jobliste/&parts=content,site',
+    '/umbraco/api/spa/GetData?apphost=localhost&navLevels=2&navContext=true&url=/da/limbotestarea/test-underforside/alle-block-elementer/&parts=content,site',
     // '/api/pages/home',
     // '/api/pages/about',
     // '/api/posts',
