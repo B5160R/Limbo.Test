@@ -31,7 +31,7 @@ public class SpaApiControllerTests : IntegrationTestBase<Program> {
     [Test]
     [TestCase(TestName = "SpaApiControllerTests - GetData returns expected data for block elements")]
     [Description("Test to ensure that the GetData method in the SpaApiController returns expected data for block elements.")]
-    public async Task GetData_ReturnsOKWithBlockElementContentType() {
+    public async Task GetData_Returns_Expected_Data_With_BlockElement_ContentType() {
         // Arrange
         string pageName = "Alle block-elementer";
         string url = "api/spa/GetData?apphost=localhost&navLevels=2&navContext=false&url=/da/limbotestarea/test-underforside/alle-block-elementer/&parts=content";

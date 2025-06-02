@@ -109,7 +109,7 @@ public class NuGetPackageTests {
             packages.AddRange(ListNuGetPackages(projectFile).ToList());
         }
 
-        List<PackageInfo> packageInProjects = packages .Where(p => p.NuGetPackage.Equals(nugetPackageName, StringComparison.OrdinalIgnoreCase)) .ToList();
+        List<PackageInfo> packageInProjects = packages.Where(p => p.NuGetPackage.Equals(nugetPackageName, StringComparison.OrdinalIgnoreCase)) .ToList();
 
         //Assert
         Assert.Multiple(() => {

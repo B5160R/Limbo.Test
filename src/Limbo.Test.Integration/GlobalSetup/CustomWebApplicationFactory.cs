@@ -11,8 +11,6 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
         // Set the base address for the client
         client.BaseAddress = baseAddress;
 
-        // client.BaseAddress = new Uri("https://localhost:10280/umbraco/");
-
         return client;
     }
 

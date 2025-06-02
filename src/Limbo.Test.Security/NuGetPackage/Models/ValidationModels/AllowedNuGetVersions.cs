@@ -4,6 +4,6 @@ public class AllowedNuGetVersions {
     {
         // new object[] { "NUnit.Analyzers", "4.4.0", "Limbo.Test.Integration" },
         new object[] { "NUnit.Analyzers", "4.4.0", "Limbo.Test.Security" },
-        new object[] { "NUnit", "4.3.2", ""}
+        new object[] { "NUnit", "5.3.2", ""}
     };
 }
